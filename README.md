@@ -104,15 +104,15 @@ A hierarchy of `.jsbeautifyrc` files is supported, where rc files at the deeper 
 
 #### <kbd>M-x</kbd> `web-beautify-js`
 
-Format region from if active, otherwise the current buffer. Formation is done according to the `js-beautify` command.
+Format region from if active, otherwise the current buffer. Formatting is done according to the `js-beautify` command.
 
 #### <kbd>M-x</kbd> `web-beautify-css`
 
-Format region from if active, otherwise the current buffer. Formation is done according to the `css-beautify` command.
+Format region from if active, otherwise the current buffer. Formatting is done according to the `css-beautify` command.
 
 #### <kbd>M-x</kbd> `web-beautify-html`
 
-Format region from if active, otherwise the current buffer. Formation is done according to the `html-beautify` command.
+Format region from if active, otherwise the current buffer. Formatting is done according to the `html-beautify` command.
 
 # License
 
