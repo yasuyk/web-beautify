@@ -162,7 +162,7 @@ Formatting is done according to the css-beautify command."
 
 ;;;###autoload
 (defun web-beautify-js ()
-  "Format region from if active, otherwise the current buffer.
+  "Format region if active, otherwise the current buffer.
 
 Formatting is done according to the js-beautify command."
   (interactive)
