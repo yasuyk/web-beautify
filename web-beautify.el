@@ -130,7 +130,7 @@ By PROGRAM, format current buffer with EXTENSTION."
 (defun web-beautify-html ()
   "Format region if active, otherwise the current buffer.
 
-Formation is done according to the html-beautify command."
+Formatting is done according to the html-beautify command."
   (interactive)
   (if (use-region-p)
       (web-beautify-format-region
@@ -147,7 +147,7 @@ Formation is done according to the html-beautify command."
 (defun web-beautify-css ()
   "Format region if active, otherwise the current buffer.
 
-Formation is done according to the css-beautify command."
+Formatting is done according to the css-beautify command."
   (interactive)
   (if (use-region-p)
       (web-beautify-format-region
@@ -164,7 +164,7 @@ Formation is done according to the css-beautify command."
 (defun web-beautify-js ()
   "Format region from if active, otherwise the current buffer.
 
-Formation is done according to the js-beautify command."
+Formatting is done according to the js-beautify command."
   (interactive)
   (if (use-region-p)
       (web-beautify-format-region
