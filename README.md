@@ -72,6 +72,10 @@ add the following hook to your emacs configuration:
 
 The following `js-beautify` settings are available with `.jsbeautifyrc`. Check out the official [jsbeautifier documentation](https://github.com/einars/js-beautify#options) for more details on the options:
 
+### JavaScript
+
+Thease are JavaScript Beautifier Options:
+
 * `indent_size`: Indentation size [4]
 * `indent_char`: Indentation character [" "]
 * `indent_level`: Initial indentation level [0]
@@ -89,6 +93,13 @@ The following `js-beautify` settings are available with `.jsbeautifyrc`. Check o
 * `space_before_conditional`: should the space before conditional statement be added [true]
 * `keep_function_indentation`: false
 * `eval_code`: false
+
+### CSS
+
+Thease are CSS Beautifier Options:
+
+* `indent_size`: Indentation size [4]
+* `indent_char`: Indentation character [" "]
 
 ### .jsbeautifyrc files
 **Web-beautify** supports `.jsbeautifyrc` JSON files.
