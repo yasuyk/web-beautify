@@ -101,6 +101,20 @@ Thease are CSS Beautifier Options:
 * `indent_size`: Indentation size [4]
 * `indent_char`: Indentation character [" "]
 
+### HTML
+
+Thease are HTML Beautifier Options:
+
+* `indent_inner_html`:  Indent <head> and <body> sections. [false]
+* `indent_size`: Indentation size [4]
+* `indent_char`: Indentation character [" "]
+* `brace_style`: \[collapse|expand|end-expand] ["collapse"]
+* `indent_scripts`: \[keep|separate|normal] ["normal"]
+* `wrap_line_length`: Maximum characters per line (0 disables) [250]
+* `preserve_newlines`: Preserve line-breaks [true]
+* `max_preserve_newlines`: Number of line-breaks to be preserved in one chunk [10]
+* `unformatted`:  List of tags (defaults to inline) that should not be reformatted
+
 ### .jsbeautifyrc files
 **Web-beautify** supports `.jsbeautifyrc` JSON files.
 
