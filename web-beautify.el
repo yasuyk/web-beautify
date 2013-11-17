@@ -174,9 +174,7 @@ Formation is done according to the js-beautify command."
 
 ;;;###autoload
 (defun web-beautify-js-buffer ()
-  "Format the current buffer according to the js-beautify command.
-
-Formation is done according to the js-beautify command."
+  "Format the current buffer according to the js-beautify command."
   (web-beautify-format-buffer web-beautify-js-program "js"))
 
 
