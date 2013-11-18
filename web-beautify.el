@@ -1,4 +1,4 @@
-;;; web-beautify.el --- Format HTML, CSS and JavaScript/JSON
+;;; web-beautify.el --- Format HTML, CSS and JavaScript/JSON by js-beautify
 
 ;; Copyright (C) 2013 Yasuyuki Oka <yasuyk@gmail.com>
 
