@@ -78,53 +78,48 @@
    "%s not found. Install it by typing: \"npm -g install js-beautify\" "
    program))
 
-(defun web-beautify-format-error-message (bufname)
-  "Construct a format error message with BUFNAME."
+(defun web-beautify-format-error-message (buffer-name)
+  "Construct a format error message with BUFFER-NAME."
   (format
    "Could not apply web-beautify. See %s to check errors for details"
-   bufname))
+   buffer-name))
 
-(defun web-beautify-format-region (program beg end)
-  "By PROGRAM, format each line in the BEG .. END region."
+(defun web-beautify-get-shell-command (program)
+  "Join PROGRAM with the constant js-beautify args."
+  (mapconcat 'identity (append (list program) web-beautify-args) " "))
+
+(defun web-beautify-format-region (program beginning end)
+  "By PROGRAM, format each line in the BEGINNING .. END region."
+  ;; Check that js-beautify is installed.
   (if (executable-find program)
-      (save-excursion
-        (apply 'call-process-region beg end program t
-               (list t nil) t web-beautify-args))
+      (let* ((output-buffer-name "*Web Beautify Errors*")
+             (output-buffer (get-buffer-create output-buffer-name))
+             ;; Stash the previous point/window positions so they can be
+             ;; reclaimed after the buffer is replaced. Otherwise there is a
+             ;; disturbing "jump" to vertically-center point after being
+             ;; momentarily bounced to the top of the file.
+             (previous-point (point))
+             (previous-window-start (window-start))
+             (shell-command (web-beautify-get-shell-command program)))
+        ;; Run the command.
+        (if (zerop (shell-command-on-region beginning end shell-command (current-buffer) t output-buffer t))
+            (progn
+              ;; Reclaim position for a smooth transition.
+              (goto-char previous-point)
+              (set-window-start nil previous-window-start)
+              (message "Applied web-beautify.")
+              (kill-buffer output-buffer))
+          ;; Unfortunately an error causes the buffer to be replaced with
+          ;; emptiness... so undo that. Kind of an ugly hack. But a
+          ;; properly-configured web-beautify shouldn't encounter this much, if
+          ;; ever.
+          (undo)
+          (message (web-beautify-format-error-message output-buffer-name))))
     (message (web-beautify-command-not-found-message program))))
 
-(defun web-beautify-format-buffer (program extenstion)
+(defun web-beautify-format-buffer (program)
   "By PROGRAM, format current buffer with EXTENSTION."
-    (if (executable-find program)
-        (web-beautify-format-buffer-1 program extenstion)
-      (message (web-beautify-command-not-found-message program))))
-
-(defun web-beautify-format-buffer-1 (program extenstion)
-  "Internal function of `web-beautify-format-buffer'.
-
-By PROGRAM, format current buffer with EXTENSTION."
-  (let* ((tmpfile (make-temp-file "web-beautify" nil
-                                  (format ".%s" extenstion)))
-         (outputbufname (format "*web-beautify-%s*" extenstion))
-         (outputbuf (get-buffer-create outputbufname))
-         (args (append web-beautify-args (list tmpfile))))
-    (unwind-protect
-        (progn
-          (with-current-buffer outputbuf (erase-buffer))
-          (write-region nil nil tmpfile)
-
-          (if (zerop (apply 'call-process program nil outputbuf nil args))
-              (let ((p (point)))
-                (save-excursion
-                  (with-current-buffer (current-buffer)
-                    (erase-buffer)
-                    (insert-buffer-substring outputbuf)))
-                (goto-char p)
-                (message "Applied web-beautify")
-                (kill-buffer outputbuf))
-            (message (web-beautify-format-error-message outputbufname))
-            (display-buffer outputbuf)))
-      (progn
-        (delete-file tmpfile)))))
+  (web-beautify-format-region program (point-min) (point-max)))
 
 ;;;###autoload
 (defun web-beautify-html ()
@@ -141,7 +136,7 @@ Formatting is done according to the html-beautify command."
 ;;;###autoload
 (defun web-beautify-html-buffer ()
   "Format the current buffer according to the html-beautify command."
-  (web-beautify-format-buffer web-beautify-html-program "html"))
+  (web-beautify-format-buffer web-beautify-html-program))
 
 ;;;###autoload
 (defun web-beautify-css ()
@@ -152,13 +147,13 @@ Formatting is done according to the css-beautify command."
   (if (use-region-p)
       (web-beautify-format-region
        web-beautify-css-program
-    (region-beginning) (region-end))
+       (region-beginning) (region-end))
     (web-beautify-css-buffer)))
 
 ;;;###autoload
 (defun web-beautify-css-buffer ()
   "Format the current buffer according to the css-beautify command."
-  (web-beautify-format-buffer web-beautify-css-program "css"))
+  (web-beautify-format-buffer web-beautify-css-program))
 
 ;;;###autoload
 (defun web-beautify-js ()
@@ -175,7 +170,7 @@ Formatting is done according to the js-beautify command."
 ;;;###autoload
 (defun web-beautify-js-buffer ()
   "Format the current buffer according to the js-beautify command."
-  (web-beautify-format-buffer web-beautify-js-program "js"))
+  (web-beautify-format-buffer web-beautify-js-program))
 
 
 (provide 'web-beautify)
