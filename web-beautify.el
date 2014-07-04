@@ -75,13 +75,13 @@
 (defun web-beautify-command-not-found-message (program)
   "Construct a message about PROGRAM not found."
   (format
-   "%s not found. Install it by typing: \"npm -g install js-beautify\" "
+   "%s not found. Install it with `npm -g install js-beautify`."
    program))
 
 (defun web-beautify-format-error-message (buffer-name)
   "Construct a format error message with BUFFER-NAME."
   (format
-   "Could not apply web-beautify. See %s to check errors for details"
+   "Could not apply web-beautify. See %s to for details."
    buffer-name))
 
 (defun web-beautify-get-shell-command (program)
