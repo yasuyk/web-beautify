@@ -70,8 +70,6 @@
 (defvar web-beautify-js-program "js-beautify"
   "The executable to use for formatting JavaScript and JSON.")
 
-(defconst web-beautify-args '("-f" "-"))
-
 (defun web-beautify-command-not-found-message (program)
   "Construct a message about PROGRAM not found."
   (format
@@ -88,8 +86,8 @@
   "By PROGRAM, format each line in the BEG .. END region."
   (if (executable-find program)
       (save-excursion
-        (apply 'call-process-region beg end program t
-               (list t nil) t web-beautify-args))
+        (call-process-region beg end program t
+               t nil t "-"))
     (message (web-beautify-command-not-found-message program))))
 
 (defun web-beautify-format-buffer (program extenstion)
@@ -204,18 +202,19 @@ By PROGRAM, format current buffer with EXTENSTION."
       ;; We're using errbuf for the mixed stdout and stderr output. This
       ;; is not an issue because -q does not produce any stdout
       ;; output in case of success.
-      (when (zerop (apply 'call-process program
-                          nil errbuf nil
-                          (append web-beautify-args (list "-q" "-r" tmpfile))))
+      (if (zerop (call-process program
+                        nil errbuf nil
+                        "-q" "-r" "-f" tmpfile))
+          (progn
             (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
                 (message "Buffer is already beautified")
               (web-beautify--apply-rcs-patch patchbuf)
               (message "Applied web-beautify"))
             (web-beautify--kill-error-buffer errbuf))
-      (if errbuf (with-current-buffer errbuf
-                   (progn
-                     (error "%s" (buffer-string))
-                     (web-beautify--kill-error-buffer errbuf))))
+        (if errbuf (with-current-buffer errbuf
+                     (progn
+                       (error "%s" (buffer-string))
+                       (web-beautify--kill-error-buffer errbuf)))))
 
       (kill-buffer patchbuf)
       (delete-file tmpfile))))
