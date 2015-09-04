@@ -98,33 +98,127 @@
         (web-beautify-format-buffer-1 program extenstion)
       (message (web-beautify-command-not-found-message program))))
 
+;; Copy of go--goto-line from https://github.com/dominikh/go-mode.el
+(defun web-beautify--goto-line (line)
+  (goto-char (point-min))
+  (forward-line (1- line)))
+
+;; Copy of go--delete-whole-line from https://github.com/dominikh/go-mode.el
+(defun web-beautify--delete-whole-line (&optional arg)
+  "Delete the current line without putting it in the kill-ring."
+  ;; Derived from `kill-whole-line'.
+  ;; ARG is defined as for that function.
+  (setq arg (or arg 1))
+  (if (and (> arg 0)
+           (eobp)
+           (save-excursion (forward-visible-line 0) (eobp)))
+      (signal 'end-of-buffer nil))
+  (if (and (< arg 0)
+           (bobp)
+           (save-excursion (end-of-visible-line) (bobp)))
+      (signal 'beginning-of-buffer nil))
+  (cond ((zerop arg)
+         (delete-region (progn (forward-visible-line 0) (point))
+                        (progn (end-of-visible-line) (point))))
+        ((< arg 0)
+         (delete-region (progn (end-of-visible-line) (point))
+                        (progn (forward-visible-line (1+ arg))
+                               (unless (bobp)
+                                 (backward-char))
+                               (point))))
+        (t
+         (delete-region (progn (forward-visible-line 0) (point))
+                        (progn (forward-visible-line arg) (point))))))
+
+;; Copy of go--apply-rcs-patch from https://github.com/dominikh/go-mode.el
+(defun web-beautify--apply-rcs-patch (patch-buffer)
+  "Apply an RCS-formatted diff from PATCH-BUFFER to the current
+buffer."
+  (let ((target-buffer (current-buffer))
+        ;; Relative offset between buffer line numbers and line numbers
+        ;; in patch.
+        ;;
+        ;; Line numbers in the patch are based on the source file, so
+        ;; we have to keep an offset when making changes to the
+        ;; buffer.
+        ;;
+        ;; Appending lines decrements the offset (possibly making it
+        ;; negative), deleting lines increments it. This order
+        ;; simplifies the forward-line invocations.
+        (line-offset 0))
+    (save-excursion
+      (with-current-buffer patch-buffer
+        (goto-char (point-min))
+        (while (not (eobp))
+          (unless (looking-at "^\\([ad]\\)\\([0-9]+\\) \\([0-9]+\\)")
+            (error "invalid rcs patch or internal error in `web-beautify-fixer--apply-rcs-patch`"))
+          (forward-line)
+          (let ((action (match-string 1))
+                (from (string-to-number (match-string 2)))
+                (len  (string-to-number (match-string 3))))
+            (cond
+             ((equal action "a")
+              (let ((start (point)))
+                (forward-line len)
+                (let ((text (buffer-substring start (point))))
+                  (with-current-buffer target-buffer
+                    (decf line-offset len)
+                    (goto-char (point-min))
+                    (forward-line (- from len line-offset))
+                    (insert text)))))
+             ((equal action "d")
+              (with-current-buffer target-buffer
+                (web-beautify--goto-line (- from line-offset))
+                (incf line-offset len)
+                (web-beautify--delete-whole-line len)))
+             (t
+              (error "invalid rcs patch or internal error in `web-beautify--apply-rcs-patch`")))))))))
+
+;; Copy of go--kill-error-buffer from https://github.com/dominikh/go-mode.el
+(defun web-beautify--kill-error-buffer (errbuf)
+  (let ((win (get-buffer-window errbuf)))
+    (if win
+        (quit-window t win)
+      (kill-buffer errbuf))))
+
 (defun web-beautify-format-buffer-1 (program extenstion)
   "Internal function of `web-beautify-format-buffer'.
 
 By PROGRAM, format current buffer with EXTENSTION."
-  (let* ((tmpfile (make-temp-file "web-beautify" nil
-                                  (format ".%s" extenstion)))
-         (outputbufname (format "*web-beautify-%s*" extenstion))
-         (outputbuf (get-buffer-create outputbufname))
-         (args (append web-beautify-args (list tmpfile))))
-    (unwind-protect
-        (progn
-          (with-current-buffer outputbuf (erase-buffer))
-          (write-region nil nil tmpfile)
+  (let ((tmpfile (make-temp-file "web-beautify" nil
+                                 (format ".%s" extenstion)))
+        (patchbuf (get-buffer-create (format "*web-beautify-%s*" extenstion)))
+        (errbuf (get-buffer-create (format "*web-beautify-error-%s*" extenstion))))
 
-          (if (zerop (apply 'call-process program nil outputbuf nil args))
-              (let ((p (point)))
-                (save-excursion
-                  (with-current-buffer (current-buffer)
-                    (erase-buffer)
-                    (insert-buffer-substring outputbuf)))
-                (goto-char p)
-                (message "Applied web-beautify")
-                (kill-buffer outputbuf))
-            (message (web-beautify-format-error-message outputbufname))
-            (display-buffer outputbuf)))
-      (progn
-        (delete-file tmpfile)))))
+    (save-restriction
+      (widen)
+      (if errbuf
+          (with-current-buffer errbuf
+            (setq buffer-read-only nil)
+            (erase-buffer)))
+      (with-current-buffer patchbuf
+        (erase-buffer))
+
+      (write-region nil nil tmpfile)
+
+      ;; We're using errbuf for the mixed stdout and stderr output. This
+      ;; is not an issue because -q does not produce any stdout
+      ;; output in case of success.
+      (when (zerop (apply 'call-process program
+                          nil errbuf nil
+                          (append web-beautify-args (list "-q" "-r" tmpfile))))
+            (if (zerop (call-process-region (point-min) (point-max) "diff" nil patchbuf nil "-n" "-" tmpfile))
+                (message "Buffer is already beautified")
+              (web-beautify--apply-rcs-patch patchbuf)
+              (message "Applied web-beautify"))
+            (web-beautify--kill-error-buffer errbuf))
+      (if errbuf (with-current-buffer errbuf
+                   (progn
+                     (error "%s" (buffer-string))
+                     (web-beautify--kill-error-buffer errbuf))))
+
+      (kill-buffer patchbuf)
+      (delete-file tmpfile))))
 
 ;;;###autoload
 (defun web-beautify-html ()
