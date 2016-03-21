@@ -1,6 +1,6 @@
 ;;; web-beautify.el --- Format HTML, CSS and JavaScript/JSON by js-beautify
 
-;; Copyright (C) 2013 Yasuyuki Oka <yasuyk@gmail.com>
+;; Copyright (C) 2013-2016 Yasuyuki Oka and web-beautify contributors
 
 ;; Author: Yasuyuki Oka <yasuyk@gmail.com>
 ;; Version: 0.1
