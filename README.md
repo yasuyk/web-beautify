@@ -1,4 +1,4 @@
-# web-beautify [![licence][gplv3-badge]][gplv3-link] [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
+# web-beautify [![licence][gplv3-badge]][gplv3-link] [![travis badge][travis-badge]][travis-link] [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 
 **web-beautify** is a formatting package of HTML, CSS and JavaScript/JSON for Emacs.
 It uses the command-line/node.js javascript formatter from http://jsbeautifier.org/ to format whole html, css, js or json files, or region.
