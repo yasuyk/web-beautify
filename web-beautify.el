@@ -88,6 +88,14 @@
   "Join PROGRAM with the constant js-beautify args."
   (mapconcat 'identity (append (list program) web-beautify-args) " "))
 
+
+(defun web-beautify-reload ()
+  "Reload mode to activate faces."
+  (cond ((eq major-mode 'web-mode)
+         (web-mode-reload))
+        ((eq major-mode 'js2-mode)
+         (js2-mode))))
+
 (defun web-beautify-format-region (program beginning end)
   "By PROGRAM, format each line in the BEGINNING .. END region."
   ;; Check that js-beautify is installed.
@@ -108,6 +116,7 @@
               (goto-char previous-point)
               (set-window-start nil previous-window-start)
               (message "Applied web-beautify.")
+              (web-beautify-reload)
               (kill-buffer output-buffer))
           ;; Unfortunately an error causes the buffer to be replaced with
           ;; emptiness... so undo that. Kind of an ugly hack. But a
