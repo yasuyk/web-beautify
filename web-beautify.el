@@ -88,6 +88,8 @@
   "Join PROGRAM with the constant js-beautify args."
   (mapconcat 'identity (append (list program) web-beautify-args) " "))
 
+(declare-function web-mode-reload "ext:web-mode")
+(declare-function js2-mode "ext:js2-mode")
 
 (defun web-beautify-reload ()
   "Reload mode to activate faces."
