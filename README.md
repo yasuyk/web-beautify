@@ -47,6 +47,9 @@ Add the following to your emacs init file.
     (eval-after-load 'sgml-mode
       '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
 
+    (eval-after-load 'web-mode
+      '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
+
     (eval-after-load 'css-mode
       '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
 
@@ -71,6 +74,11 @@ add the following hook to your emacs configuration:
 
     (eval-after-load 'sgml-mode
       '(add-hook 'html-mode-hook
+                 (lambda ()
+                   (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+
+    (eval-after-load 'web-mode
+      '(add-hook 'web-mode-hook
                  (lambda ()
                    (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
 
