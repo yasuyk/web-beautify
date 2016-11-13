@@ -93,6 +93,7 @@
 
 (defun web-beautify-reload ()
   "Reload mode to activate faces."
+  (deactivate-mark)
   (cond ((eq major-mode 'web-mode)
          (web-mode-reload))
         ((eq major-mode 'js2-mode)
