@@ -89,7 +89,7 @@
 (defun web-beautify-get-shell-command (program)
   "Join PROGRAM with the constant js-beautify args."
   (if (eq program web-beautify-js-program)
-      (mapconcat 'identity (append (list program) es-beautifier-args) " ")
+      (mapconcat 'identity (append (list program) web-beautify-es-beautifier-args) " ")
       (mapconcat 'identity (append (list program) web-beautify-args) " "))
   )
 
