@@ -67,15 +67,17 @@
 (defvar web-beautify-css-program "css-beautify"
   "The executable to use for formatting CSS.")
 
-(defvar web-beautify-js-program "js-beautify"
+(defvar web-beautify-js-program "es-beautifier"
   "The executable to use for formatting JavaScript and JSON.")
 
+
 (defconst web-beautify-args '("-f" "-"))
+(defconst es-beautifier-args '("-u"))
 
 (defun web-beautify-command-not-found-message (program)
   "Construct a message about PROGRAM not found."
   (format
-   "%s not found. Install it with `npm -g install js-beautify`."
+   "%s not found. Install it with `npm -g install es-beautifier`."
    program))
 
 (defun web-beautify-format-error-message (buffer-name)
@@ -86,7 +88,10 @@
 
 (defun web-beautify-get-shell-command (program)
   "Join PROGRAM with the constant js-beautify args."
-  (mapconcat 'identity (append (list program) web-beautify-args) " "))
+  (if (eq program web-beautify-js-program)
+      (mapconcat 'identity (append (list program) es-beautifier-args) " ")
+      (mapconcat 'identity (append (list program) web-beautify-args) " "))
+  )
 
 (declare-function web-mode-reload "ext:web-mode")
 (declare-function js2-mode "ext:js2-mode")

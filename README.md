@@ -11,13 +11,40 @@ It uses the command-line/node.js javascript formatter from http://jsbeautifier.o
 
 # Requirements
 
-* `js-beautify` installed by typing: `npm -g install js-beautify`
+* `js-beautify` installed by typing: `npm -g install js-beautify --save-dev`
+* `es-beautifier` installed by typing: `npm install es-beautifier eslint eslint-plugin-es-beautifier --save-dev`
 
 # Installation
 
 ## Manual
 
 Just drop `web-beautify.el`. somewhere in your `load-path`.
+
+Then your configure your .eslintrc along the lines of this example:
+https://github.com/dai-shi/es-beautifier#example-1
+Web beautify uses es-beautifier, which after adding the es-beautifier plugin
+to your eslintrc, uses your custom rules to extend it's behavior. 
+So if you have another eslint extenstion e.g. airbnb
+
+  "extends": [
+    "eslint-config-airbnb",
+    "plugin:es-beautifier/standard"
+  ],
+  
+you may have to copy or modify the extensions rules into your rules
+
+  "rules": {
+    "camelcase": 0,
+    "comma-dangle": 0, 
+    "id-length": [1, { "exceptions": ["i","j","k","x","y","z","_"]}],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    ....
+
+to get the desired beautifying behavior.
+
+  
+  
+
 
 ```lisp
 (add-to-list 'load-path "~/somewhere")
