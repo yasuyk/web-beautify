@@ -42,6 +42,9 @@ you may have to copy or modify the extensions rules into your rules
 
 to get the desired beautifying behavior.
 
+If you want to configure html or css beautifying behavior, you'll need to setup a
+.jsbeautifyrc
+
   
   
 
