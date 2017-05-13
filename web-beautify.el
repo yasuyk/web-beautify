@@ -72,7 +72,7 @@
 
 
 (defconst web-beautify-args '("-f" "-"))
-(defconst es-beautifier-args '("-u"))
+(defconst web-beautify-es-beautifier-args '("-u"))
 
 (defun web-beautify-command-not-found-message (program)
   "Construct a message about PROGRAM not found."
