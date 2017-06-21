@@ -90,6 +90,7 @@
 
 (declare-function web-mode-reload "ext:web-mode")
 (declare-function js2-mode "ext:js2-mode")
+(declare-function react-mode "ext:react-mode")
 
 (defun web-beautify-reload ()
   "Reload mode to activate faces."
@@ -97,7 +98,9 @@
   (cond ((eq major-mode 'web-mode)
          (web-mode-reload))
         ((eq major-mode 'js2-mode)
-         (js2-mode))))
+         (js2-mode))
+        ((eq major-mode 'react-mode)
+         (react-mode))))
 
 (defun web-beautify-format-region (program beginning end)
   "By PROGRAM, format each line in the BEGINNING .. END region."
