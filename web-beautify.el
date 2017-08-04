@@ -97,7 +97,9 @@
   (cond ((eq major-mode 'web-mode)
          (web-mode-reload))
         ((eq major-mode 'js2-mode)
-         (js2-mode))))
+         (js2-mode)))
+  (let ((enable-local-variables :all))
+    (hack-dir-local-variables-non-file-buffer)))
 
 (defun web-beautify-format-region (program beginning end)
   "By PROGRAM, format each line in the BEGINNING .. END region."
