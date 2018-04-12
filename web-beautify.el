@@ -70,6 +70,16 @@
 (defvar web-beautify-js-program "js-beautify"
   "The executable to use for formatting JavaScript and JSON.")
 
+(defvar web-beautify-major-mode-alist '((js-mode    . web-beautify-js-buffer)
+                                        (js2-mode   . web-beautify-js-buffer)
+                                        (json-mode  . web-beautify-js-buffer)
+                                        (html-mode  . web-beautify-html-buffer)
+                                        (mhtml-mode . web-beautify-html-buffer)
+                                        (web-mode   . web-beautify-html-buffer)
+                                        (css-mode   . web-beautify-css-buffer)
+                                        (scss-mode  . web-beautify-css-buffer))
+  "An alist of major modes and their associated beautifier function.")
+
 (defconst web-beautify-args '("-f" "-"))
 
 (defun web-beautify-command-not-found-message (program)
@@ -184,6 +194,21 @@ Formatting is done according to the js-beautify command."
   "Format the current buffer according to the js-beautify command."
   (web-beautify-format-buffer web-beautify-js-program))
 
+;;;###autoload
+(defun web-beautify-before-save-enable ()
+  "Enable the buffer-local beautifier in `before-save-hook'."
+  (add-hook 'before-save-hook 'web-beautify-buffer t t))
+
+;;;###autoload
+(defun web-beautify-buffer ()
+  "Call the appropriate beautifier function for the current major-mode.
+The function is determined by `web-beautify-major-mode-alist'. If
+there is no associated entry for the current major-mode, this function
+has no effect."
+  (interactive)
+  (let* ((beautifier (assoc major-mode web-beautify-major-mode-alist)))
+    (when beautifier
+      (funcall (cdr beautifier)))))
 
 (provide 'web-beautify)
 
