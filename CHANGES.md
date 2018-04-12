@@ -1,3 +1,10 @@
+# next
+
+- New features:
+
+   - Added `web-beautify-buffer` command, which runs the major-mode-appropriate
+     buffer beautifier function.
+
 # 0.3.1 (Apr 9, 2016)
 
 - Bug fixes:

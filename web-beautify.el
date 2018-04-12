@@ -23,6 +23,21 @@
 
 ;; Add the following to your Emacs init file.
 
+;; Complete setup using `use-package':
+
+;; (use-package web-beautify
+;;   :after (:any js-mode js2-mode json-mode sgml-mode mhtml-mode web-mode css-mode scss-mode)
+;;   :hook ((js-mode js2-mode json-mode html-mode mhtml-mode web-mode css-mode scss-mode) . web-beautify-before-save-enable)
+;;   :bind ((:map js-mode-map ("C-c b" . web-beautify-js))
+;;          (:map js2-mode-map ("C-c b" . web-beautify-js))
+;;          (:map json-mode-map ("C-c b" . web-beautify-js))
+;;          (:map html-mode-map ("C-c b" . web-beautify-html))
+;;          (:map mhtml-mode-map ("C-c b" . web-beautify-html))
+;;          (:map css-mode-map ("C-c b" . web-beautify-css))
+;;          (:map scss-mode-map ("C-c b" . web-beautify-css))))
+
+;; Manual setup:
+
 ;;     (require 'web-beautify) ;; Not necessary if using ELPA package
 ;;     (eval-after-load 'js2-mode
 ;;       '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
@@ -39,22 +54,22 @@
 ;;     (eval-after-load 'js2-mode
 ;;       '(add-hook 'js2-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'json-mode
 ;;       '(add-hook 'json-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'sgml-mode
 ;;       '(add-hook 'html-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'css-mode
 ;;       '(add-hook 'css-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;; For more information, See URL https://github.com/yasuyk/web-beautify.
 
