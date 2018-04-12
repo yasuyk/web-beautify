@@ -17,3 +17,5 @@
 (should-autoloadp 'web-beautify-html-buffer)
 (should-autoloadp 'web-beautify-css-buffer)
 (should-autoloadp 'web-beautify-js-buffer)
+(should-autoloadp 'web-beautify-before-save-enable)
+(should-autoloadp 'web-beautify-buffer)

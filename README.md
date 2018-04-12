@@ -34,59 +34,79 @@ you can install `web-beautify.el` from the [MELPA](http://melpa.milkbox.net/) re
 
 Add the following to your emacs init file.
 
-    (require 'web-beautify) ;; Not necessary if using ELPA package
-    (eval-after-load 'js2-mode
-      '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
-    ;; Or if you're using 'js-mode' (a.k.a 'javascript-mode')
-    (eval-after-load 'js
-      '(define-key js-mode-map (kbd "C-c b") 'web-beautify-js))
+### Complete setup using [`use-package`](https://github.com/jwiegley/use-package)
 
-    (eval-after-load 'json-mode
-      '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+``` lisp
+(use-package web-beautify
+  :after (:any js-mode js2-mode json-mode sgml-mode mhtml-mode web-mode css-mode scss-mode)
+  :hook ((js-mode js2-mode json-mode html-mode mhtml-mode web-mode css-mode scss-mode) . web-beautify-before-save-enable)
+  :bind ((:map js-mode-map ("C-c b" . web-beautify-js))
+         (:map js2-mode-map ("C-c b" . web-beautify-js))
+         (:map json-mode-map ("C-c b" . web-beautify-js))
+         (:map html-mode-map ("C-c b" . web-beautify-html))
+         (:map mhtml-mode-map ("C-c b" . web-beautify-html))
+         (:map css-mode-map ("C-c b" . web-beautify-css))
+         (:map scss-mode-map ("C-c b" . web-beautify-css))))
+```
 
-    (eval-after-load 'sgml-mode
-      '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+### Manual setup
 
-    (eval-after-load 'web-mode
-      '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
+``` lisp
+(require 'web-beautify) ;; Not necessary if using ELPA package
+(eval-after-load 'js2-mode
+  '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
+;; Or if you're using 'js-mode' (a.k.a 'javascript-mode')
+(eval-after-load 'js
+  '(define-key js-mode-map (kbd "C-c b") 'web-beautify-js))
 
-    (eval-after-load 'css-mode
-      '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
+(eval-after-load 'json-mode
+  '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+
+(eval-after-load 'sgml-mode
+  '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+
+(eval-after-load 'web-mode
+  '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
+
+(eval-after-load 'css-mode
+  '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
+```
 
 If you want to automatically format before saving a file,
 add the following hook to your emacs configuration:
 
-    (eval-after-load 'js2-mode
-      '(add-hook 'js2-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+``` lisp
+(eval-after-load 'js2-mode
+  '(add-hook 'js2-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
-    ;; Or if you're using 'js-mode' (a.k.a 'javascript-mode')
-    (eval-after-load 'js
-      '(add-hook 'js-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+;; Or if you're using 'js-mode' (a.k.a 'javascript-mode')
+(eval-after-load 'js
+  '(add-hook 'js-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
-    (eval-after-load 'json-mode
-      '(add-hook 'json-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+(eval-after-load 'json-mode
+  '(add-hook 'json-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
-    (eval-after-load 'sgml-mode
-      '(add-hook 'html-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+(eval-after-load 'sgml-mode
+  '(add-hook 'html-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
-    (eval-after-load 'web-mode
-      '(add-hook 'web-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+(eval-after-load 'web-mode
+  '(add-hook 'web-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
-    (eval-after-load 'css-mode
-      '(add-hook 'css-mode-hook
-                 (lambda ()
-                   (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))
-
+(eval-after-load 'css-mode
+  '(add-hook 'css-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-buffer t t))))
+```
 
 ## `js-beautify` settings
 

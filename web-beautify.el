@@ -23,6 +23,21 @@
 
 ;; Add the following to your Emacs init file.
 
+;; Complete setup using `use-package':
+
+;; (use-package web-beautify
+;;   :after (:any js-mode js2-mode json-mode sgml-mode mhtml-mode web-mode css-mode scss-mode)
+;;   :hook ((js-mode js2-mode json-mode html-mode mhtml-mode web-mode css-mode scss-mode) . web-beautify-before-save-enable)
+;;   :bind ((:map js-mode-map ("C-c b" . web-beautify-js))
+;;          (:map js2-mode-map ("C-c b" . web-beautify-js))
+;;          (:map json-mode-map ("C-c b" . web-beautify-js))
+;;          (:map html-mode-map ("C-c b" . web-beautify-html))
+;;          (:map mhtml-mode-map ("C-c b" . web-beautify-html))
+;;          (:map css-mode-map ("C-c b" . web-beautify-css))
+;;          (:map scss-mode-map ("C-c b" . web-beautify-css))))
+
+;; Manual setup:
+
 ;;     (require 'web-beautify) ;; Not necessary if using ELPA package
 ;;     (eval-after-load 'js2-mode
 ;;       '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
@@ -39,22 +54,22 @@
 ;;     (eval-after-load 'js2-mode
 ;;       '(add-hook 'js2-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'json-mode
 ;;       '(add-hook 'json-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'sgml-mode
 ;;       '(add-hook 'html-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;;     (eval-after-load 'css-mode
 ;;       '(add-hook 'css-mode-hook
 ;;                  (lambda ()
-;;                    (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))
+;;                    (add-hook 'before-save-hook 'web-beautify-buffer t t))))
 
 ;; For more information, See URL https://github.com/yasuyk/web-beautify.
 
@@ -69,6 +84,16 @@
 
 (defvar web-beautify-js-program "js-beautify"
   "The executable to use for formatting JavaScript and JSON.")
+
+(defvar web-beautify-major-mode-alist '((js-mode    . web-beautify-js-buffer)
+                                        (js2-mode   . web-beautify-js-buffer)
+                                        (json-mode  . web-beautify-js-buffer)
+                                        (html-mode  . web-beautify-html-buffer)
+                                        (mhtml-mode . web-beautify-html-buffer)
+                                        (web-mode   . web-beautify-html-buffer)
+                                        (css-mode   . web-beautify-css-buffer)
+                                        (scss-mode  . web-beautify-css-buffer))
+  "An alist of major modes and their associated beautifier function.")
 
 (defconst web-beautify-args '("-f" "-"))
 
@@ -184,6 +209,21 @@ Formatting is done according to the js-beautify command."
   "Format the current buffer according to the js-beautify command."
   (web-beautify-format-buffer web-beautify-js-program))
 
+;;;###autoload
+(defun web-beautify-before-save-enable ()
+  "Enable the buffer-local beautifier in `before-save-hook'."
+  (add-hook 'before-save-hook 'web-beautify-buffer t t))
+
+;;;###autoload
+(defun web-beautify-buffer ()
+  "Call the appropriate beautifier function for the current major-mode.
+The function is determined by `web-beautify-major-mode-alist'. If
+there is no associated entry for the current major-mode, this function
+has no effect."
+  (interactive)
+  (let* ((beautifier (assoc major-mode web-beautify-major-mode-alist)))
+    (when beautifier
+      (funcall (cdr beautifier)))))
 
 (provide 'web-beautify)
 
