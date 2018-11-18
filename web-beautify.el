@@ -70,7 +70,7 @@
 (defvar web-beautify-js-program "js-beautify"
   "The executable to use for formatting JavaScript and JSON.")
 
-(defconst web-beautify-args '("-f" "-"))
+(defconst web-beautify-args '("-f" "-" "-n"))
 
 (defun web-beautify-command-not-found-message (program)
   "Construct a message about PROGRAM not found."
