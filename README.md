@@ -94,7 +94,7 @@ The following `js-beautify` settings are available with `.jsbeautifyrc`. Check o
 
 ### JavaScript
 
-Thease are JavaScript Beautifier Options:
+These are JavaScript Beautifier Options:
 
 * `indent_size`: Indentation size [4]
 * `indent_char`: Indentation character [" "]
